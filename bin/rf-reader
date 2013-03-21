@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+use AnyEvent;
+use POSIX qw/strftime/;
+use RF::Decoder::Debug;
+use RF::Decoder::X10;
+use RF;
+
+my $port = shift || '/dev/ttyACM0';
+my $cv = AnyEvent->condvar;
+open my $raw, '>', '/tmp/raw-'.strftime('%Y%m%d-%H%M%S', gmtime).'.rf' or die;
+my $rf = RF->new(serial_port => $port, capturing_cb => sub {
+                   # wait 4 seconds then exit
+                   my $w;
+                   $w = AnyEvent->timer(after => 4, cb => sub {
+                                          $self->stop_capture(sub {
+                                                                $cv->send;
+                                                              });
+                                          undef $w;
+                                        });
+                 },
+                 log_fh => $raw,
+                 recognizers =>
+                 [
+                  RF::Decoder::X10->new(),
+                  RF::Decoder::Manchester->new(min => 300, max => 1200,
+                                               mid => 750),
+                  RF::Decoder::Debug->new(),
+                 ]);
+$cv->recv;

@@ -1,0 +1,14 @@
+ff 9d 52 09  0a 09 1f 09   1e 09 0a 09  0a 09 1f 09
+0a 09 0a 09  1e 09 0b 09   0a 09 1e 09  1e 09 0b 09
+1e 09 1e 09  0a 09 0a 09   1e 09 0a 09  0a 09 0a 09
+0b 09 0a 09  1f 09 1f 09   0a 09 1f 09  1e 09 1f 09
+1f 09 1e 09  ff 9e
+
+use RF::Decoder::X10;
+push @r, RF::Decoder::X10->new();
+
+$msg = {
+         'house' => 'a',
+         'unit' => 9,
+         'command' => 'off'
+       };
