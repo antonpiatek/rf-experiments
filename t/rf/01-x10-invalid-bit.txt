@@ -1,0 +1,10 @@
+ff 9d 52 09  3a
+
+use RF::Decoder::X10;
+push @r, RF::Decoder::X10->new();
+
+
+
+found gap 1: 9420
+found gap high 2: 4920
+invalid high 4: 3480

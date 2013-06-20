@@ -30,9 +30,12 @@ sub new {
 sub add_bit {
   my ($self, $value) = @_;
   $self->{_len}++;
-  return unless ($value);
   my $l = $self->{_len}-1;
   my $byte = int($l/8);
+  unless ($value) {
+    $self->{_bytes}->[$byte] += 0; # ensure defined
+    return;
+  }
   my $bit = $l%8;
   $self->{_bytes}->[$byte] |= 2**(7-$bit);
 }
@@ -56,13 +59,13 @@ sub bytes {
 }
 
 sub pretty {
-  my $self = shift;
-  sprintf(("%02x " x $self->byte_length), @{$self->bytes});
+  my ($self, $fmt) = @_;
+  $fmt //= '%02x';
+  sprintf((join ' ', ($fmt) x $self->byte_length), @{$self->bytes});
 }
 
 sub pretty_binary {
-  my $self = shift;
-  sprintf(("%08b " x $self->byte_length), @{$self->bytes});
+  shift->pretty('%08b');
 }
 
 1;

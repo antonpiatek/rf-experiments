@@ -34,8 +34,7 @@ sub recognize {
     } else {
       $self->set_state(STATE_FREE);
       my $num = scalar @{$self->{v}};
-      print STDERR "E $index $num: ", (join ',', @{$self->{v}}), "\n"
-            if ($num > 10);
+      warn "E $index $num: ", (join ',', @{$self->{v}}), "\n" if ($num > 10);
     }
   }
 }

@@ -52,8 +52,7 @@ sub process_bits {
     }
     $r{house} = $byte_to_house{($bytes->[0]&0xf0)>>4};
     $r{command} = $byte_to_command{$bytes->[2]&$mask};
-    print STDERR 'X10: ', $r{house}, ' ', $r{unit}||'', ' ', $r{command}, "\n"
-      if DEBUG;
+    warn 'X10: ', $r{house}, ' ', $r{unit}||'', ' ', $r{command}, "\n" if DEBUG;
     $cb->(\%r);
   }
 }
