@@ -335,13 +335,34 @@ sub unpack_data {
     my @hex_bytes = $self->nibbles_to_hexarray($data);
     say "0x",@hex_bytes if $self->debug;
 
-    #Notes: Level 00 used for on/off
-    # 		level 40 sometimes sent as a repeat for off
+    # Recorded from siemens JSJSLW100LBK remote:
+    # ON commands
+    #           level 00 used for on
+    #		level BF used to increase brightness
+    # OFF commands
+    #           level 00 used for off (sometimes followed by repeats of 40)
+    #		level A0 used to decrease brightness
     #		Level C0 used on button D4 for "all off"
+    # MOOD commands
     #		level 82 used on button D4 with cmd MOOD for mood (mood 2?)
     #		level 02 used on button D4 with cmd MOOD to set current levels as mood (mood 2?)
-    #		level BF used to increase brightness
-    #		level A0 used to decrease brightness
+
+    # Tested response ranges (observed behaviour for transmitted command)
+    # ON:
+    # x00 - x3F on to last level
+    # x40 - x5F set specific level (32 levels)
+    # x60 - x7F set specific level (32 levels) 
+    # x80 - x9F set specific level (32 levels)
+    # xA0 - xBF increase brightness
+    # xC0 - xDF set all to specific level (32 levels)
+    # xE0 - xFF set all to specific level (32 levels)
+    # OFF:
+    # x00 - x7F Off
+    # x80 - x9F set specific level (32 levels) if already on
+    # xA0 - xBF decrease brightness
+    # xC0 - xEF All off
+
+
     my $level   = $hex_bytes[0] . $hex_bytes[1];
     my $subunit = $self->LWRF_hex_to_subunit( $hex_bytes[2] );
     my $command = $self->LWRF_hex_to_cmd( $hex_bytes[3] );
